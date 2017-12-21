@@ -103,18 +103,18 @@ This could be confusing.. So let us start with an example:
                                Nothing    -> return Nothing
                                Just value -> runMaybeT $ f value
     ```
-  > notes:
-  > 1. in `return` function:
-  `MaybeT` is the value constructor.
-  `return` wraps things in monad `m`.
-  `Just` wraps things in monad `Maybe`
-  > 2. `>>=` bind, peeks into monad `IO`, applies `f` on value of type `a`
-  and short circuit on `Nothing`. Now, it is obvious that this `>>=` *unwraps*
-  2 layer of monads, and shovels the inner most value of type `a` and pass into
-  `f`. But wait, you might start tp wonder now, okay, `>>=` *unwraps* 2 layers,
-  but in order to use `>>=` for `Maybe T m` monad, I have to create `f` that
-  *wraps* 2 layers of monads: `Maybe` and `IO`, is there an easy way to do
-  that, so my efforts of using transformers are worthy?
+    > notes:
+    > 1. in `return` function:
+    `MaybeT` is the value constructor.
+    `return` wraps things in monad `m`.
+    `Just` wraps things in monad `Maybe`
+    > 2. `>>=` bind, peeks into monad `IO`, applies `f` on value of type `a`
+    and short circuit on `Nothing`. Now, it is obvious that this `>>=` *unwraps*
+    2 layer of monads, and shovels the inner most value of type `a` and pass into
+    `f`. But wait, you might start tp wonder now, okay, `>>=` *unwraps* 2 layers,
+    but in order to use `>>=` for `Maybe T m` monad, I have to create `f` that
+    *wraps* 2 layers of monads: `Maybe` and `IO`, is there an easy way to do
+    that, so my efforts of using transformers are worthy?
 
   - Now, let us compose with the `>>=`
   ```haskell
