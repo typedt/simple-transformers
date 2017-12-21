@@ -1,4 +1,4 @@
-module Before
+module MaybeT.Before
   where
 
 import Data.Char

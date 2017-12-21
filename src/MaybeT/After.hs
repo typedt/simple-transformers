@@ -1,4 +1,4 @@
-module After
+module MaybeT.After
   where
 
 import Data.Char

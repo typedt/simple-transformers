@@ -1,7 +1,10 @@
 module Main where
 
-import Before
-import After
+import MaybeT.Before
+import MaybeT.After
+
+runMaybeTEg :: IO ()
+runMaybeTEg = foo >> putStrLn "\n" >> betterFoo
 
 main :: IO ()
-main = putStrLn "Before:" >> foo >> putStrLn "\nAfter:" >> betterFoo
+main = runMaybeTEg
