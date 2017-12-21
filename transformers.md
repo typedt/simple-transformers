@@ -4,9 +4,9 @@
 From wikipedia (with modifications)
 > In functional programming, a monad transformer is a type constructor
   which takes a monad as an argument and returns a monad as a result.
-* A type constructor `t` of kind that works on a monad type parameter
-* Monad operation `return` and `bind` satisfying monad laws
-* MonadTrans operation `lift :: m a -> t m a` satisfying monad transformer laws
+  * A type constructor `t` of kind that works on a monad type parameter
+  * Monad operation `return` and `bind` satisfying monad laws
+  * MonadTrans operation `lift :: m a -> t m a` satisfying monad transformer laws
 
 #### First glimpse - MaybeT
 ```haskell
@@ -14,21 +14,21 @@ From wikipedia (with modifications)
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
 ```
 > notes:
-0. checkpoint: what is type constructor and value constructor
-1. kind of type constructor MaybeT (on the left)
-is `(* -> *) -> * -> *`, where
-m has kind `* -> *`,
-a has kind `*`
-and MaybeT is a type constructor that takes a monad type constructor `m`,
-and type `a` to construct the final concrete type.
-In other words, `((* -> *) -> *) -> *` where `MaybeT m` has kind of
-`((* -> *) -> *)`! (Does this remind you of anything? Yes, a Monad!)
-2. the key word `newtype` introduces a *single-parameter* value constructor.
-`data` can do the same thing, but `newtype` is considered more efficient
-than data, as
-  - it forces value constructor to be strict, while data is lazy. eg.,
-    - `newtype A = A Int` then `A undefined` will be evaluated to `undefined`
-    whereas `data D = D Int` and `D undefined` is not.
+  0. checkpoint: what is type constructor and value constructor
+  1. kind of type constructor MaybeT (on the left)
+  is `(* -> *) -> * -> *`, where
+  m has kind `* -> *`,
+  a has kind `*`
+  and MaybeT is a type constructor that takes a monad type constructor `m`,
+  and type `a` to construct the final concrete type.
+  In other words, `((* -> *) -> *) -> *` where `MaybeT m` has kind of
+  `((* -> *) -> *)`! (Does this remind you of anything? Yes, a Monad!)
+  2. the key word `newtype` introduces a *single-parameter* value constructor.
+  `data` can do the same thing, but `newtype` is considered more efficient
+  than data, as
+    - it forces value constructor to be strict, while data is lazy. eg.,
+      - `newtype A = A Int` then `A undefined` will be evaluated to `undefined`
+      whereas `data D = D Int` and `D undefined` is not.
 
 ##### Now what exactly is `MaybeT`?
 Let us re-examine the kind of `MaybeT :: ((* -> *) -> *) -> *`,
