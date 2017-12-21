@@ -1,0 +1,50 @@
+name:                simple-transformers
+version:             0.1.0.0
+github:              "typedt/simple-transformers"
+license:             BSD3
+author:              "Donna Tang"
+maintainer:          "donnatxj@gmail.com"
+copyright:           "2017 Donna Tang"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+synopsis:            Examples of simple monad transformers in Haskell
+category:            Example
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/typedt/simple-transformers#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- transformers
+- hscolour
+
+library:
+  source-dirs: src
+
+executables:
+  simple-transformers-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - simple-transformers
+
+tests:
+  simple-transformers-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - simple-transformers
