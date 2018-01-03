@@ -25,7 +25,7 @@ outputError :: IO ()
 outputError = putStrLn "Invalid Data!"
 
 outputData :: String -> IO ()
-outputData = putStrLn
+outputData = putStrLn . ("result is: " ++)
 
 foo :: IO ()
 foo = do

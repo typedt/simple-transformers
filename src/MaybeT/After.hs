@@ -17,7 +17,10 @@ getValidData = MaybeT $ liftM isValid getLine
                      xs -> Just xs
 
 processData1 :: String -> NewMonad String
-processData1 _ = lift getLine
+processData1 _ = MaybeT $ liftM Just getLine
+
+-- processData1 :: String -> NewMonad String
+-- processData1 _ = lift getLine
 
 processData2 :: String -> NewMonad String
 processData2 str = MaybeT $ liftM (isValid str) getLine
@@ -29,7 +32,7 @@ outputError :: IO ()
 outputError = putStrLn "Invalid Data!"
 
 outputData :: String -> IO ()
-outputData = putStrLn
+outputData = putStrLn . ("result is: " ++)
 
 betterFoo :: IO ()
 betterFoo = do

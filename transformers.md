@@ -91,7 +91,30 @@ This could be confusing.. So let us start with an example:
     without having to *unwrap* and *wrap* `IO` using `do` notations?
     AKA, peek into `IO (Maybe a)`, and validates `Maybe a`,
     short circuit on Nothing.
-    Here comes the `MaybeT IO` monad.
+    Let us define the `MaybeT IO` monad.
+
+    First, Functor.
+    ```haskell
+    instance Functor m => Functor (MaybeT m) where
+      fmap f = MaybeT . (fmap (fmap f)) . runMaybeT
+    ```
+
+    Then, Applicative.
+    ```haskell
+    instance (Functor m, Monad m) => Applicative (Maybe T m) where
+      pure = MaybeT . return . Just
+      mf <*> mx = MaybeT $ do
+        maybe_f <- runMaybeT mf
+        case maybe_f of
+          Nothing -> return Nothing
+          Just f -> do
+            maybe_x <- runMaybeT mx
+            case maybe_x of
+              Nothing -> return Nothing
+              Just x -> return (Just (f x))
+    ```
+
+    Finally, Monad.
     ```haskell
     instance Monad m => Monad (MaybeT m) where
       return = MaybeT . return . Just
@@ -133,46 +156,44 @@ This could be confusing.. So let us start with an example:
       maybe outputError outputData maybe_final_data
   ```
 
-  - Essentially, monad `MaybeT m a` generates a value of type `m (Maybe a)`,
-  via `runMaybeT` function. It is used when you want to *unwrap* the outside
-  monad.
-
-  - `lift` allows us to reuse functions that work with `m` monad,
+  - In some cases, functions that process data might be predefined to work
+  with `IO`, but not `NewMonad`, we can use `lift` to reuse these functions,
   and bring them into the `MaybeT m` monad in order to use them in `do` block
   ```haskell
   instance MonadTrans MaybeT where
       lift :: (Monad m, MonadTrans t) => m a -> t m a
       lift = MaybeT . (liftM Just)
 
+  -- laws
   lift . return = return
   lift (m >>= f) = lift m >>= (lift . f)
   ```
-  Let us use `lift` to make functions that produces `MaybeT IO` results
+  Let us use `lift` to make functions that produce `MaybeT IO` results
   from `IO` actions. It *wraps* the *content* of IO with `Just` and
   construct `MaybeT IO` monad.
 
-  Imagine if we need to do `IO` actions in `getValidData`:
+  Imagine if we need to do `IO` actions in `processData`:
   ```haskell
   type NewMonad = MaybeT IO
 
-  action1 :: IO String
-  action2 :: IO String
+  action1 :: String -> IO String
+  action2 :: String -> IO String
 
   -- without using lift
-  processData' :: String -> NewMonad String
-  processData' str = MaybeT $ liftM Just result
+  processData :: String -> NewMonad String
+  processData str = MaybeT $ liftM Just result
       where
         result = do
-          s1 <- action1
-          s2 <- action2
-          return $ str ++ s1 ++ s2
+          s1 <- action1 str
+          s2 <- action2 str
+          return $ s1 ++ s2
 
   -- using lift
-  processData :: String -> NewMonad String
-  processData str = do
-      s1 <- lift action1
-      s2 <- lift action2
-      return $ str ++ s1 ++ s2
+  processData' :: String -> NewMonad String
+  processData' str = do
+      s1 <- lift $ action1 str
+      s2 <- lift $ action2 str
+      return $ s1 ++ s2
   ```
 
 #### MonadTrans & MonadIO
